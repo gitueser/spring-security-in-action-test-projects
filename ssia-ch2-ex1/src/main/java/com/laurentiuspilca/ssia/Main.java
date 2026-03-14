@@ -1,4 +1,4 @@
-package java.com.laurentiuspilca.ssia;
+package com.laurentiuspilca.ssia;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
