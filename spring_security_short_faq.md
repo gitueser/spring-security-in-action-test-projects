@@ -281,6 +281,53 @@ Unauthenticated
 
 ---
 
+## Практическая таблица диагностики Spring Security
+
+| ситуация | HTTP код | что происходит | типичная причина |
+|---|---|---|---|
+| браузер открывает защищённый URL | 302 → `/login` | редирект на страницу логина | пользователь не аутентифицирован |
+| `curl http://localhost:8080/hello` | 401 | сервер требует authentication | нет login / token |
+| `curl -u user:wrongpass` | 401 | authentication failed | неверный пароль |
+| JWT истёк | 401 | token invalid | истёк `exp` |
+| JWT не передан | 401 | authentication required | нет `Authorization: Bearer` |
+| пользователь `USER` идёт в `ADMIN` endpoint | 403 | authorization failed | недостаточно ролей |
+| CSRF заблокировал POST | 403 | CSRF protection | нет CSRF token |
+| endpoint не разрешён в config | 403 | доступ запрещён | правила security |
+| endpoint открыт (`permitAll`) | 200 | доступ разрешён | security пропускает |
+
+---
+
+## Быстрый алгоритм диагностики
+
+endpoint не работает
+↓
+посмотреть HTTP статус
+
+### Если **401**
+
+Проблема в **authentication**.
+
+Проверить:
+
+- передан ли login
+- передан ли JWT
+- не истёк ли token
+- есть ли session cookie
+
+---
+
+### Если **403**
+
+Authentication прошёл, но **authorization не прошёл**.
+
+Проверить:
+
+- роли пользователя
+- CSRF
+- правила в SecurityConfig
+
+---
+
 ## Мини-шпаргалка `curl` для Spring Security
 
 Только body:
