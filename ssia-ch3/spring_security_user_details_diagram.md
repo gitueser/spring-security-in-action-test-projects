@@ -1,6 +1,6 @@
 # Компоненты Spring Security для управления пользователями
 
-## Схема
+## Схема (логическая зависимость интерфейсов)
 
 ```text
 UserDetailsService ───────► UserDetails ───────► GrantedAuthority
@@ -10,124 +10,194 @@ UserDetailsService ───────► UserDetails ───────►
    UserDetailsManager ───────────
 ```
 
+> Важно: все показанные элементы — **контракты (интерфейсы)**.  
+> Они **не хранят данные сами по себе**, а только **описывают методы**, которые должны реализовать классы.
+
 ---
 
-## Пояснение
+# Что означает каждый интерфейс
 
-### UserDetailsService
+## UserDetailsService
 
-Интерфейс, который отвечает за загрузку данных пользователя.
+Интерфейс, который определяет **способ загрузки пользователя**.
 
-Типичный метод:
+Spring Security использует его во время аутентификации.
+
+Метод интерфейса:
 
 ```java
-UserDetails loadUserByUsername(String username)
+UserDetails loadUserByUsername(String username);
 ```
 
-Spring Security вызывает этот метод во время аутентификации, чтобы получить информацию о пользователе по его имени.
+Что происходит:
+
+1. пользователь вводит логин
+2. Spring Security вызывает `loadUserByUsername()`
+3. реализация ищет пользователя (например в БД)
+4. возвращает объект `UserDetails`
+
+Сам интерфейс **ничего не хранит**.
+
+Хранение данных выполняет **реализация**.
+
+Примеры реализаций:
+
+- `InMemoryUserDetailsManager`
+- `JdbcUserDetailsManager`
+- собственная реализация через БД
 
 ---
 
-### UserDetails
+## UserDetails
 
-Интерфейс, который представляет пользователя внутри Spring Security.
+Интерфейс, который **описывает пользователя внутри Spring Security**.
 
-Обычно содержит:
+Он определяет методы доступа к данным пользователя:
 
-- username
-- password (уже в виде хеша)
-- authorities (роли / права)
-- состояние учётной записи: активна ли она, не заблокирована ли, не истёк ли срок действия
+```java
+String getUsername();
+String getPassword();
+Collection<? extends GrantedAuthority> getAuthorities();
+boolean isAccountNonLocked();
+boolean isEnabled();
+```
+
+Важно:
+
+Интерфейс **не хранит данные**.
+
+Данные хранятся в **классе, который реализует этот интерфейс**.
+
+Например:
+
+```java
+org.springframework.security.core.userdetails.User
+```
+
+Упрощённо:
+
+```java
+public class User implements UserDetails {
+
+    private String username;
+    private String password;
+    private Collection<GrantedAuthority> authorities;
+
+}
+```
+
+То есть:
+
+```
+UserDetails = контракт
+User = реальный объект с данными
+```
+
+---
+
+## GrantedAuthority
+
+Интерфейс, который описывает **роль или разрешение пользователя**.
+
+Метод интерфейса:
+
+```java
+String getAuthority();
+```
+
+Примеры значений:
+
+```
+ROLE_USER
+ROLE_ADMIN
+READ_PRIVILEGES
+WRITE_PRIVILEGES
+```
+
+Сам интерфейс **не хранит роль**.
+
+Роль хранится в реализации.
+
+Пример реализации:
+
+```java
+SimpleGrantedAuthority
+```
 
 Пример:
-
-```java
-UserDetails user =
-    User.withUsername("user")
-        .password("{bcrypt}$2a$10$...")
-        .roles("USER")
-        .build();
-```
-
----
-
-### GrantedAuthority
-
-Интерфейс, который представляет **роль или полномочие**, выданное пользователю.
-
-Примеры:
-
-- `ROLE_USER`
-- `ROLE_ADMIN`
-- `READ_PRIVILEGES`
-- `WRITE_PRIVILEGES`
-
-Пример создания:
 
 ```java
 new SimpleGrantedAuthority("ROLE_ADMIN")
 ```
 
-У одного пользователя может быть **одно или несколько полномочий**.
+У пользователя может быть **несколько ролей**.
 
 ---
 
-### UserDetailsManager
+## UserDetailsManager
 
-Это расширение `UserDetailsService`, которое не только загружает пользователя, но и позволяет **управлять пользователями**.
+Интерфейс, который **расширяет UserDetailsService**.
 
-Дополнительные возможности:
+Он добавляет операции **управления пользователями**.
 
-- createUser
-- updateUser
-- deleteUser
-- changePassword
-
-Пример:
+Дополнительные методы:
 
 ```java
-UserDetailsManager manager = new InMemoryUserDetailsManager();
-
-manager.createUser(
-    User.withUsername("admin")
-        .password("{noop}password")
-        .roles("ADMIN")
-        .build()
-);
+void createUser(UserDetails user);
+void updateUser(UserDetails user);
+void deleteUser(String username);
+void changePassword(String oldPassword, String newPassword);
 ```
 
----
+Он также **ничего не хранит сам**.
 
-## Коротко о связях между компонентами
+Хранение зависит от реализации.
 
-| Компонент | Назначение |
-|---|---|
-| UserDetailsService | Загружает пользователя по username |
-| UserDetails | Представляет пользователя внутри Spring Security |
-| GrantedAuthority | Представляет роли и права пользователя |
-| UserDetailsManager | Управляет учётными записями пользователей |
+Примеры реализаций:
+
+- `InMemoryUserDetailsManager`
+- `JdbcUserDetailsManager`
 
 ---
 
-## Упрощённый поток аутентификации
+# Как эти интерфейсы работают вместе
 
-```text
-запрос на логин
-      ↓
+Упрощённый поток аутентификации:
+
+```
+HTTP login request
+        ↓
 UserDetailsService.loadUserByUsername()
-      ↓
-UserDetails
-      ↓
-GrantedAuthority (роли / права)
-      ↓
-создаётся Authentication
+        ↓
+возвращается объект UserDetails
+        ↓
+UserDetails содержит роли (GrantedAuthority)
+        ↓
+Spring Security создаёт Authentication
+        ↓
+Authentication кладётся в SecurityContext
 ```
 
 ---
 
-## Как это проще запомнить
+# Короткая шпаргалка
 
-- `UserDetailsService` = сервис, который ищет пользователя
-- `UserDetails` = объект пользователя
-- `GrantedAuthority` = роли и права пользователя
-- `UserDetailsManager` = сервис, который умеет не только искать, но и изменять пользователей
+| Интерфейс | Что делает | Где хранятся данные |
+|---|---|---|
+| UserDetailsService | загружает пользователя | в реализации |
+| UserDetails | описывает пользователя | в реализации класса |
+| GrantedAuthority | описывает роль | в реализации |
+| UserDetailsManager | управляет пользователями | в реализации |
+
+---
+
+# Простая аналогия
+
+```
+UserDetailsService = сервис поиска пользователя
+UserDetails = описание пользователя
+GrantedAuthority = роль пользователя
+UserDetailsManager = сервис управления пользователями
+```
+
+Все они — **контракты**, а реальные данные и логика находятся в **классах‑реализациях**.
