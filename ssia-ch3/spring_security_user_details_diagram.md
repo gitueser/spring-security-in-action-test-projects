@@ -1,9 +1,8 @@
+# Компоненты Spring Security для управления пользователями
 
-# Spring Security User Management Components
+## Схема
 
-## Diagram
-
-```
+```text
 UserDetailsService ───────► UserDetails ───────► GrantedAuthority
         ▲                        │
         │                        │
@@ -11,34 +10,36 @@ UserDetailsService ───────► UserDetails ───────►
    UserDetailsManager ───────────
 ```
 
-## Explanation
+---
+
+## Пояснение
 
 ### UserDetailsService
 
-Interface responsible for loading user data.
+Интерфейс, который отвечает за загрузку данных пользователя.
 
-Typical method:
+Типичный метод:
 
 ```java
 UserDetails loadUserByUsername(String username)
 ```
 
-Spring Security calls this method during authentication to retrieve user information.
+Spring Security вызывает этот метод во время аутентификации, чтобы получить информацию о пользователе по его имени.
 
 ---
 
 ### UserDetails
 
-Represents a user in Spring Security.
+Интерфейс, который представляет пользователя внутри Spring Security.
 
-Typical fields:
+Обычно содержит:
 
 - username
-- password (hashed)
-- authorities (roles / permissions)
-- account status (enabled, locked, expired)
+- password (уже в виде хеша)
+- authorities (роли / права)
+- состояние учётной записи: активна ли она, не заблокирована ли, не истёк ли срок действия
 
-Example:
+Пример:
 
 ```java
 UserDetails user =
@@ -52,37 +53,37 @@ UserDetails user =
 
 ### GrantedAuthority
 
-Represents a **permission or role** granted to a user.
+Интерфейс, который представляет **роль или полномочие**, выданное пользователю.
 
-Examples:
+Примеры:
 
-ROLE_USER  
-ROLE_ADMIN  
-READ_PRIVILEGES  
-WRITE_PRIVILEGES  
+- `ROLE_USER`
+- `ROLE_ADMIN`
+- `READ_PRIVILEGES`
+- `WRITE_PRIVILEGES`
 
-Example implementation:
+Пример создания:
 
 ```java
 new SimpleGrantedAuthority("ROLE_ADMIN")
 ```
 
-A user may have **multiple authorities**.
+У одного пользователя может быть **одно или несколько полномочий**.
 
 ---
 
 ### UserDetailsManager
 
-Extension of `UserDetailsService` that also allows **user management operations**.
+Это расширение `UserDetailsService`, которое не только загружает пользователя, но и позволяет **управлять пользователями**.
 
-Extra capabilities:
+Дополнительные возможности:
 
 - createUser
 - updateUser
 - deleteUser
 - changePassword
 
-Example:
+Пример:
 
 ```java
 UserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -97,27 +98,36 @@ manager.createUser(
 
 ---
 
-## Relationship Summary
+## Коротко о связях между компонентами
 
-| Component | Responsibility |
+| Компонент | Назначение |
 |---|---|
-| UserDetailsService | Loads user by username |
-| UserDetails | Represents authenticated user |
-| GrantedAuthority | Represents roles / permissions |
-| UserDetailsManager | Manages user accounts |
+| UserDetailsService | Загружает пользователя по username |
+| UserDetails | Представляет пользователя внутри Spring Security |
+| GrantedAuthority | Представляет роли и права пользователя |
+| UserDetailsManager | Управляет учётными записями пользователей |
 
 ---
 
-## Authentication Flow (simplified)
+## Упрощённый поток аутентификации
 
-```
-login request
+```text
+запрос на логин
       ↓
 UserDetailsService.loadUserByUsername()
       ↓
 UserDetails
       ↓
-GrantedAuthority (roles)
+GrantedAuthority (роли / права)
       ↓
-Authentication created
+создаётся Authentication
 ```
+
+---
+
+## Как это проще запомнить
+
+- `UserDetailsService` = сервис, который ищет пользователя
+- `UserDetails` = объект пользователя
+- `GrantedAuthority` = роли и права пользователя
+- `UserDetailsManager` = сервис, который умеет не только искать, но и изменять пользователей
