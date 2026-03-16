@@ -58,7 +58,9 @@ UserDetails loadUserByUsername(String username);
 String getUsername();
 String getPassword();
 Collection<? extends GrantedAuthority> getAuthorities();
+boolean isAccountNonExpired();
 boolean isAccountNonLocked();
+boolean isCredentialsNonExpired();
 boolean isEnabled();
 ```
 
