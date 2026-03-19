@@ -1,5 +1,6 @@
 package com.laurentiuspilca.ssia.config;
 
+import com.laurentiuspilca.ssia.security.Sha512PasswordEncoder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +18,10 @@ public class UserManagementConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
+//        Sha512PasswordEncoder encoder = new Sha512PasswordEncoder();
+//        String hash = encoder.encode("12345");
+//        System.out.println("!!!hash: " + hash);
+
         var cs = new DefaultSpringSecurityContextSource("ldap://127.0.0.1:33389/dc=springframework,dc=org");
         cs.afterPropertiesSet();
 
