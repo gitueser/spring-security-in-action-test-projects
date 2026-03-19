@@ -1,5 +1,8 @@
 package com.laurentiuspilca.ssia.security;
 
+import org.springframework.security.crypto.encrypt.BytesEncryptor;
+import org.springframework.security.crypto.encrypt.Encryptors;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
@@ -39,6 +42,27 @@ public class Sha512PasswordEncoder implements PasswordEncoder {
         StringKeyGenerator keyGeneratorStringKeyGenerator = KeyGenerators.string();
         String salt = keyGeneratorStringKeyGenerator.generateKey();
         System.out.println("MY StringKeyGenerator's salt is: " + salt);
+
+        String password = "secret";
+        String valueToEncrypt = "HELLO";
+
+//        BytesEncryptor e = Encryptors.standard(password, salt);
+        BytesEncryptor bytesEncryptor = Encryptors.stronger(password, salt);
+        byte [] bytesEncrypted = bytesEncryptor.encrypt(valueToEncrypt.getBytes());
+        System.out.println("MY bytesEncrypted is: " + Arrays.toString(bytesEncrypted));
+        byte [] bytesDecrypted = bytesEncryptor.decrypt(bytesEncrypted);
+        System.out.println("MY bytesDecrypted is: " + Arrays.toString(bytesDecrypted));
+
+        TextEncryptor textEncryptorNoedOpText = Encryptors.noOpText();
+        String textEncryptedNoedOpText = textEncryptorNoedOpText.encrypt(valueToEncrypt);
+        System.out.println("My textEncryptedNoedOpText is: " + textEncryptedNoedOpText);
+
+        TextEncryptor textEncryptor = Encryptors.text(password, salt);
+        String textEncrypted = textEncryptor.encrypt(valueToEncrypt);
+        System.out.println("My textEncrypted is: " + textEncrypted);
+        String textDecrypted = textEncryptor.decrypt(textEncrypted);
+        System.out.println("My textDecrypted is: " + textDecrypted);
+
 
 //        BytesKeyGenerator keyGeneratorBytesKeyGenerator = KeyGenerators.secureRandom(16);
         BytesKeyGenerator keyGeneratorBytesKeyGenerator = KeyGenerators.shared(16);
