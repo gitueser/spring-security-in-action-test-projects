@@ -1,28 +1,41 @@
 package com.laurentiuspilca.ssia.config;
 
-import com.laurentiuspilca.ssia.models.DummyUser;
-import com.laurentiuspilca.ssia.service.InMemoryUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
-import java.util.List;
+import javax.sql.DataSource;
 
 @Configuration
 public class UserManagementConfig {
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails dummyUser = new DummyUser("dummy", "111", "read");
-        List<UserDetails> dummyUsers = List.of(dummyUser);
+    public UserDetailsService userDetailsService(DataSource dataSource) {
+        String usersByUsernameQuery =
+                "select username, password, enabled from my_spring_schema.users where username = ?";
+        String authsByUserQuery =
+                "select username, authority from my_spring_schema.authorities where username = ?";
 
-        return new InMemoryUserDetailsService(dummyUsers);
+        var userDetailsManager = new JdbcUserDetailsManager(dataSource);
+        userDetailsManager.setUsersByUsernameQuery(usersByUsernameQuery);
+        userDetailsManager.setAuthoritiesByUsernameQuery(authsByUserQuery);
+        return userDetailsManager;
+//        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+//        return jdbcUserDetailsManager;
     }
+
+
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails dummyUser = new DummyUser("dummy", "111", "read");
+//        List<UserDetails> dummyUsers = List.of(dummyUser);
+//
+//        return new InMemoryUserDetailsService(dummyUsers);
+//    }
+
 
 //    @Bean
 //    public UserDetailsService userDetailsService() {
