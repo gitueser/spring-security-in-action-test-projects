@@ -65,8 +65,9 @@ public class UserManagementConfig {
 //        userDetailsService.createUser(user);
 //        return userDetailsService;
 //    }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
-    }
+
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return NoOpPasswordEncoder.getInstance();
+//    }
 }
