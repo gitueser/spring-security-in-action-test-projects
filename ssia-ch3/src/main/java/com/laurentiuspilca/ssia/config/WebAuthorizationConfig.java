@@ -1,6 +1,7 @@
 package com.laurentiuspilca.ssia.config;
 
 //import com.laurentiuspilca.ssia.security.CustomAuthenticationProvider;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -19,14 +20,30 @@ public class WebAuthorizationConfig {
     @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
-        http.httpBasic(Customizer.withDefaults());
-
-//        http.authenticationProvider(authenticationProvider);
-
-        http.authorizeHttpRequests(
-                c -> c.anyRequest().authenticated()
-        );
+        http
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .authorizeHttpRequests(c -> c
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
+
+
+//    @Bean
+//    SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//
+//        http.httpBasic(Customizer.withDefaults());
+//
+////        http.authenticationProvider(authenticationProvider);
+//
+//        http.authorizeHttpRequests(
+//                c -> c.anyRequest().authenticated()
+//        );
+//
+//        return http.build();
+//    }
 }
