@@ -3,6 +3,7 @@ package com.laurentiuspilca.ssia.config;
 //import com.laurentiuspilca.ssia.security.CustomAuthenticationProvider;
 
 import com.laurentiuspilca.ssia.security.MyFilter;
+import com.laurentiuspilca.ssia.security.RequestValidationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -23,7 +24,8 @@ public class WebAuthorizationConfig {
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
         http
-                .addFilterBefore(new MyFilter(), BasicAuthenticationFilter.class)
+//                .addFilterBefore(new MyFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new RequestValidationFilter(), BasicAuthenticationFilter.class)
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authorizeHttpRequests(c -> c

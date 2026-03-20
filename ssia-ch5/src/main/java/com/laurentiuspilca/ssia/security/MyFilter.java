@@ -10,7 +10,8 @@ import java.io.IOException;
 
 public class MyFilter extends OncePerRequestFilter {
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
         System.out.println(">>> BEFORE FILTER");
         filterChain.doFilter(request, response);
         System.out.println(">>> AFTER FILTER");
