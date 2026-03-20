@@ -2,17 +2,21 @@ package com.laurentiuspilca.ssia.config;
 
 //import com.laurentiuspilca.ssia.security.CustomAuthenticationProvider;
 
-import com.laurentiuspilca.ssia.security.AuthenticationLoggingFilter;
-import com.laurentiuspilca.ssia.security.RequestValidationFilter;
+import com.laurentiuspilca.ssia.security.StaticKeyAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 public class WebAuthorizationConfig {
+
+    private final StaticKeyAuthenticationFilter staticKeyAuthenticationFilter;
+
+    public WebAuthorizationConfig(StaticKeyAuthenticationFilter staticKeyAuthenticationFilter) {
+        this.staticKeyAuthenticationFilter = staticKeyAuthenticationFilter;
+    }
 
 //    private final CustomAuthenticationProvider authenticationProvider;
 //
@@ -25,15 +29,17 @@ public class WebAuthorizationConfig {
 
         http
 //                .addFilterBefore(new MyFilter(), BasicAuthenticationFilter.class)
-                .addFilterBefore(new RequestValidationFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new AuthenticationLoggingFilter(), BasicAuthenticationFilter.class)
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
-                .authorizeHttpRequests(c -> c
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
+//                .addFilterBefore(new RequestValidationFilter(), BasicAuthenticationFilter.class)
+                .addFilterAt(staticKeyAuthenticationFilter, BasicAuthenticationFilter.class)
+                .authorizeHttpRequests(c -> c.anyRequest().permitAll());
+//                .addFilterAfter(new AuthenticationLoggingFilter(), BasicAuthenticationFilter.class)
+//                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+//                .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+//                .authorizeHttpRequests(c -> c
+//                        .requestMatchers("/h2-console/**").permitAll()
+//                        .anyRequest().authenticated()
+//                );
+//                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
