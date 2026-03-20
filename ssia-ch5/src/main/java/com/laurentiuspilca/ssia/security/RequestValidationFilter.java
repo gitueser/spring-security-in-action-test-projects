@@ -11,12 +11,12 @@ public class RequestValidationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
             ServletException {
         var httpRequest = (HttpServletRequest) request;
-        System.out.println("MY httpRequest is: " + httpRequest.toString());
+        System.out.println("MY RequestValidationFilter httpRequest is: " + httpRequest.toString());
         var httpResponse = (HttpServletResponse) response;
-        System.out.println("MY httpResponse is: " + httpResponse.toString());
+        System.out.println("MY RequestValidationFilter httpResponse is: " + httpResponse.toString());
 
         String requestId = httpRequest.getHeader("Request-Id");
-        System.out.println("My requestId is: " + requestId);
+        System.out.println("My RequestValidationFilter requestId is: " + requestId);
         if (requestId == null || requestId.isBlank()) {
             httpResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
