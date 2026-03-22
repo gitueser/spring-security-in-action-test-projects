@@ -6,7 +6,7 @@
 
 ```text
 SecurityContext = информация о текущем пользователе
-SecurityContextHolder = место/механизм, через который Spring получает этот контекст
+SecurityContextHolder = механизм, через который Spring получает и хранит этот контекст
 ```
 
 Обычно внутри `SecurityContext` хранится объект:
@@ -59,25 +59,21 @@ T3 -> SecurityContext(User3)
 
 Проблема появляется **не между обычными запросами**, а когда **внутри уже существующего потока запроса создаётся новый поток**.
 
+Типичный случай в Spring — использование `@Async`.
+
 Например:
 
 ```text
 Запрос A -> поток T1 -> User1 уже аутентифицирован
 ```
 
-И дальше внутри кода, который выполняется в `T1`, создаётся ещё один поток.
+И дальше внутри кода, который выполняется в `T1`, запускается метод `@Async`, а Spring выполняет его в другом потоке.
 
 Для наглядности будем обозначать его так:
 
 ```text
-T1_child
-```
-
-То есть:
-
-```text
 T1 -> основной поток HTTP-запроса
-T1_child -> новый поток, созданный из T1
+T1_child -> новый поток, созданный для @Async
 ```
 
 ---
@@ -120,12 +116,37 @@ T1_child -> НЕ видит SecurityContext(User1) автоматически
 ```text
 Запрос A -> T1 -> SecurityContext(User1)
                   |
-                  | создаёт новый поток
+                  | вызывает @Async
                   v
                T1_child -> SecurityContext(EMPTY)
 ```
 
 То есть пользователь аутентифицирован в `T1`, но в `T1_child` контекст уже пустой.
+
+---
+
+# Пример endpoint с @Async
+
+```java
+@GetMapping("/bye")
+@Async
+public void goodbye() {
+    SecurityContext context = SecurityContextHolder.getContext();
+    String username = context.getAuthentication().getName();
+    System.out.println("!!I am in Async!!!");
+}
+```
+
+## Что здесь важно понять
+
+Аннотация `@Async` означает, что метод будет выполнен **в другом потоке**.
+
+То есть:
+
+- HTTP-запрос пришёл в основной поток;
+- метод `goodbye()` запускается уже не в этом потоке, а в новом;
+- `SecurityContextHolder` по умолчанию не переносит контекст в новый поток;
+- поэтому в async-методе можно получить пустой контекст, `null` или anonymous authentication.
 
 ---
 
@@ -161,73 +182,6 @@ MODE_THREADLOCAL
 Обычные запросы -> OK
 Новый поток внутри запроса -> контекст теряется
 ```
-
----
-
-# Пример с @Async
-
-Типичный сценарий:
-
-```text
-HTTP request -> поток T2 -> User2
-```
-
-Внутри этого запроса вызывается метод `@Async`, и Spring запускает его в другом потоке.
-
-Для наглядности:
-
-```text
-T2 -> основной поток запроса
-T2_child -> поток, в котором выполняется @Async
-```
-
-Схема:
-
-```text
-Запрос B -> T2 -> SecurityContext(User2)
-                  |
-                  | @Async
-                  v
-               T2_child -> SecurityContext(EMPTY)
-```
-
-То есть внутри `@Async` текущий пользователь уже может быть недоступен.
-
----
-
-# Пример кода
-
-```java
-@GetMapping("/hello")
-public String hello() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    System.out.println("main thread user = " + auth.getName());
-
-    new Thread(() -> {
-        Authentication childAuth =
-                SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("child thread auth = " + childAuth);
-    }).start();
-
-    return "ok";
-}
-```
-
-## Что здесь произойдёт
-
-В основном потоке запроса пользователь будет доступен:
-
-```text
-main thread user = user1
-```
-
-А в новом потоке контекст может быть пустым:
-
-```text
-child thread auth = null
-```
-
-или anonymous, в зависимости от конфигурации.
 
 ---
 
@@ -293,12 +247,43 @@ T1 -> Context(User1)
 T1_child -> Context(User1)
 ```
 
-Пример настройки:
+### Пример конфигурации
 
 ```java
-SecurityContextHolder.setStrategyName(
-    SecurityContextHolder.MODE_INHERITABLETHREADLOCAL
-);
+@Configuration
+@EnableAsync
+public class ProjectConfig {
+
+    @Bean
+    public InitializingBean initializingBean() {
+        return () -> SecurityContextHolder.setStrategyName(
+                SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+}
+```
+
+## Что важно
+
+### 1. `@EnableAsync`
+Именно эта аннотация включает поддержку `@Async`.
+
+Технически её можно поставить и в главном классе приложения, но на практике удобнее держать такие настройки в конфигурационном классе.
+
+### 2. Бин с установкой стратегии должен сработать как можно раньше
+Смысл в том, чтобы стратегия `SecurityContextHolder` была установлена **до того, как начнут активно использоваться async-вызовы**.
+
+На практике такой бин и размещают в конфигурации одним из первых.
+
+### 3. Что это даёт
+Теперь при создании нового потока для `@Async` Spring сможет унаследовать контекст из родительского потока.
+
+То есть:
+
+```text
+T2 -> Context(User2)
+      |
+      v
+T2_child -> Context(User2)
 ```
 
 ---
@@ -311,7 +296,52 @@ SecurityContextHolder.setStrategyName(
 все потоки -> один общий SecurityContext
 ```
 
-Для web-приложений почти никогда не используется, потому что это небезопасно.
+### Как это выглядит
+
+```text
+T1 -> общий Context
+T2 -> общий Context
+T3 -> общий Context
+T1_child -> тот же общий Context
+```
+
+### Когда это может быть полезно
+
+Эта стратегия может иметь смысл для автономных, не-web приложений, где действительно нужен один общий security context для всего процесса.
+
+### Почему это почти не используют в web-приложениях
+
+Потому что тогда все потоки начинают видеть и менять **один и тот же объект**.
+
+Это означает:
+
+- поток T1 может изменить данные;
+- поток T2 увидит эти изменения;
+- поток T3 тоже увидит эти изменения.
+
+То есть появляется риск гонок данных и путаницы между пользователями.
+
+### Пример настройки MODE_GLOBAL
+
+```java
+@Configuration
+public class ProjectConfig {
+
+    @Bean
+    public InitializingBean initializingBean() {
+        return () -> SecurityContextHolder.setStrategyName(
+                SecurityContextHolder.MODE_GLOBAL);
+    }
+}
+```
+
+### Важное замечание про MODE_GLOBAL
+
+`SecurityContext` не является потокобезопасным объектом.
+
+Поэтому при использовании `MODE_GLOBAL` нужно самостоятельно заботиться о безопасном параллельном доступе и синхронизации.
+
+Именно поэтому для обычных backend web-приложений такая стратегия практически никогда не подходит.
 
 ---
 
@@ -394,11 +424,11 @@ servlet / Spring MVC приложениям
 
 # Короткая шпаргалка
 
-| Стратегия | Смысл |
-|---|---|
-| MODE_THREADLOCAL | каждый поток хранит свой контекст |
-| MODE_INHERITABLETHREADLOCAL | дочерний поток наследует контекст |
-| MODE_GLOBAL | один общий контекст на всё приложение |
+| Стратегия | Смысл | Для чего подходит |
+|---|---|---|
+| MODE_THREADLOCAL | каждый поток хранит свой контекст | обычные web-запросы |
+| MODE_INHERITABLETHREADLOCAL | дочерний поток наследует контекст | async внутри web-приложения |
+| MODE_GLOBAL | один общий контекст на всё приложение | автономные/single-context сценарии |
 
 ---
 
@@ -407,5 +437,7 @@ servlet / Spring MVC приложениям
 1. `SecurityContext` хранит текущего пользователя.
 2. В обычных HTTP-запросах всё работает нормально.
 3. Проблема возникает только при создании нового потока внутри уже идущего запроса.
-4. По умолчанию новый поток не получает контекст автоматически.
-5. Для async/threads контекст нужно передавать отдельно или использовать специальные средства Spring Security.
+4. `@Async` — типичный пример, когда создаётся другой поток.
+5. По умолчанию новый поток не получает контекст автоматически.
+6. Для async это можно решить через `MODE_INHERITABLETHREADLOCAL`.
+7. `MODE_GLOBAL` даёт один общий контекст на все потоки, но для web-приложений это обычно плохой выбор.
