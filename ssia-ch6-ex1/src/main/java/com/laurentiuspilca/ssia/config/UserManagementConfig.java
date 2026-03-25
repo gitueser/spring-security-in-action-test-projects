@@ -12,18 +12,22 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 @Configuration
 public class UserManagementConfig {
 
+    private static final String PROVIDER_URL = "ldap://127.0.0.1:33389/dc=springframework,dc=org";
+    private static final String OU_GROUPS = "ou=groups";
+    private static final String USERNAME_ATTRIBUTE = "uid";
+
     @Bean
     public UserDetailsService userDetailsService() {
 //        Sha512PasswordEncoder encoder = new Sha512PasswordEncoder();
 //        String hash = encoder.encode("12345");
 //        System.out.println("!!!hash: " + hash);
 
-        var cs = new DefaultSpringSecurityContextSource("ldap://127.0.0.1:33389/dc=springframework,dc=org");
+        var cs = new DefaultSpringSecurityContextSource(PROVIDER_URL);
         cs.afterPropertiesSet();
 
         var manager = new LdapUserDetailsManager(cs);
-        manager.setUsernameMapper(new DefaultLdapUsernameToDnMapper("ou=groups", "uid"));
-        manager.setGroupSearchBase("ou=groups");
+        manager.setUsernameMapper(new DefaultLdapUsernameToDnMapper(OU_GROUPS, USERNAME_ATTRIBUTE));
+        manager.setGroupSearchBase(OU_GROUPS);
 
         return manager;
     }
