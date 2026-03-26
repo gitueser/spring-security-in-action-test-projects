@@ -20,11 +20,11 @@ public class ProjectConfig {
         this.authenticationProvider = authenticationProvider;
     }
 
-    @Bean
-    public InitializingBean initializingBean() {
-        return () -> SecurityContextHolder.setStrategyName(
-                SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
-    }
+//    @Bean
+//    public InitializingBean initializingBean() {
+//        return () -> SecurityContextHolder.setStrategyName(
+//                SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+//    }
 
     @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
