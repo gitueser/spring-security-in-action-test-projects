@@ -27,22 +27,10 @@ public class ProjectConfig {
 //                SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
 //    }
 
-//    @Bean
-//    SecurityFilterChain configure(HttpSecurity http) throws Exception {
-//        http.httpBasic(Customizer.withDefaults());
-//        http.authenticationProvider(authenticationProvider);
-//        http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
-//        return http.build();
-//    }
-
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
-        http.httpBasic(c -> {
-            c.realmName("OTHER");
-            c.authenticationEntryPoint(new CustomEntryPoint());
-        });
+    SecurityFilterChain configure(HttpSecurity http) throws Exception {
+        http.formLogin(Customizer.withDefaults());
         http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
-
         return http.build();
     }
 }
