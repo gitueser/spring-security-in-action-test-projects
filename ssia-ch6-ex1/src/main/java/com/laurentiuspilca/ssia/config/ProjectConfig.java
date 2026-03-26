@@ -42,6 +42,7 @@ public class ProjectConfig {
             c.authenticationEntryPoint(new CustomEntryPoint());
         });
         http.authorizeHttpRequests(c -> c.anyRequest().authenticated());
+
         return http.build();
     }
 }
