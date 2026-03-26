@@ -2,6 +2,7 @@ package com.laurentiuspilca.ssia.controllers;
 
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.concurrent.DelegatingSecurityContextCallable;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +42,9 @@ public class HelloController {
         };
 
         ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService = new DelegatingSecurityContextExecutorService(executorService);
         try {
-            var contextTask = new DelegatingSecurityContextCallable<>(task);
-            return "Ciao, " + executorService.submit(contextTask).get() + "!";
+            return "Hola, " + executorService.submit(task).get() + "!";
         } finally {
             executorService.shutdown();
         }
