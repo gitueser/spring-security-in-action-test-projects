@@ -23,7 +23,7 @@ public class UserManagementConfig {
         uds.createUser(
                 User.withUsername("jane")
                         .password("12345")
-                        .authorities("write")
+                        .authorities("read", "write", "delete")
                         .build()
         );
         return uds;
