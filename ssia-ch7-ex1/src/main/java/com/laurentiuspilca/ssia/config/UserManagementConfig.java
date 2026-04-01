@@ -17,13 +17,13 @@ public class UserManagementConfig {
         uds.createUser(
                 User.withUsername("john")
                         .password("12345")
-                        .authorities("ROLE_ADMIN")
+                        .roles("ADMIN")
                         .build()
         );
         uds.createUser(
                 User.withUsername("jane")
                         .password("12345")
-                        .authorities("ROLE_MANAGER")
+                        .roles("MANAGER")
                         .build()
         );
         return uds;
