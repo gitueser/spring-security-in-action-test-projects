@@ -16,7 +16,7 @@ public class ProjectConfig {
         String expression = "hasAuthority('read') and !hasAuthority('delete')";
 
         http.authorizeHttpRequests(c -> c.anyRequest()
-                .access(new WebExpressionAuthorizationManager(expression))
+                .hasRole("ADMIN")
         );
 
         return http.build();
