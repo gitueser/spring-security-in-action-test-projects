@@ -13,10 +13,11 @@ public class ProjectConfig {
     @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http.httpBasic(Customizer.withDefaults());
-        String expression = "hasAuthority('read') and !hasAuthority('delete')";
 
-        http.authorizeHttpRequests(c -> c.anyRequest()
-                .hasRole("ADMIN")
+        http.authorizeHttpRequests(c -> c
+                .requestMatchers("/hello").hasRole("ADMIN")
+                .requestMatchers("/ciao").hasRole("MANAGER")
+                .anyRequest().permitAll()
         );
 
         return http.build();
