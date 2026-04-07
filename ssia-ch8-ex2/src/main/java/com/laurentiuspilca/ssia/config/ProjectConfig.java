@@ -15,9 +15,8 @@ public class ProjectConfig {
         http.httpBasic(Customizer.withDefaults());
 
         http.authorizeHttpRequests(c -> c
-                .requestMatchers(HttpMethod.GET, "/a").authenticated()
-                .requestMatchers(HttpMethod.POST, "/a").permitAll()
-                .anyRequest().denyAll()
+                .requestMatchers("/a/b/**").authenticated()
+                .anyRequest().permitAll()
         );
 
         http.csrf(c -> c.disable());
