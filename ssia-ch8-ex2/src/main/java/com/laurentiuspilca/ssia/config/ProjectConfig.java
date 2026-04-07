@@ -2,10 +2,10 @@ package com.laurentiuspilca.ssia.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 
 @Configuration
 public class ProjectConfig {
@@ -15,10 +15,12 @@ public class ProjectConfig {
         http.httpBasic(Customizer.withDefaults());
 
         http.authorizeHttpRequests(c -> c
-                .requestMatchers("/hello").hasRole("ADMIN")
-                .requestMatchers("/ciao").hasRole("MANAGER")
-                .anyRequest().permitAll()
+                .requestMatchers(HttpMethod.GET, "/a").authenticated()
+                .requestMatchers(HttpMethod.POST, "/a").permitAll()
+                .anyRequest().denyAll()
         );
+
+        http.csrf(c -> c.disable());
 
         return http.build();
     }
