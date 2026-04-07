@@ -15,12 +15,11 @@ public class ProjectConfig {
         http.httpBasic(Customizer.withDefaults());
 
         http.authorizeHttpRequests(c -> c
-                .requestMatchers("/a/b/**").authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers("/product/{code:^[0-9]*$}")
+                .permitAll()
+                .anyRequest()
+                .denyAll()
         );
-
-        http.csrf(c -> c.disable());
-
         return http.build();
     }
 }
