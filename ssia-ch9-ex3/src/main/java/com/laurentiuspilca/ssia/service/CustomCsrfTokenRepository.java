@@ -9,12 +9,15 @@ import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
 public class CustomCsrfTokenRepository implements CsrfTokenRepository {
 
+    private static final Duration TOKEN_TTL = Duration.ofMinutes(5);
     private final JpaTokenRepository jpaTokenRepository;
 
     public CustomCsrfTokenRepository(JpaTokenRepository jpaTokenRepository) {
@@ -30,15 +33,31 @@ public class CustomCsrfTokenRepository implements CsrfTokenRepository {
     @Override
     public void saveToken(CsrfToken csrfToken, HttpServletRequest request, HttpServletResponse response) {
         String identifier = request.getHeader("X-IDENTIFIER");
+
+        if (identifier == null || identifier.isBlank()) {
+            return;
+        }
+
+        if (csrfToken == null) {
+            jpaTokenRepository.findTokenByIdentifier(identifier)
+                    .ifPresent(jpaTokenRepository::delete);
+            return;
+        }
+
+        Instant expiresAt = Instant.now().plus(TOKEN_TTL);
+
         Optional<Token> existingToken = jpaTokenRepository.findTokenByIdentifier(identifier);
+
         if (existingToken.isPresent()) {
             Token token = existingToken.get();
             token.setToken(csrfToken.getToken());
+            token.setExpiresAt(expiresAt);
             jpaTokenRepository.save(token);
-        } else  {
+        } else {
             Token token = new Token();
-            token.setToken(csrfToken.getToken());
             token.setIdentifier(identifier);
+            token.setToken(csrfToken.getToken());
+            token.setExpiresAt(expiresAt);
             jpaTokenRepository.save(token);
         }
     }
@@ -46,11 +65,24 @@ public class CustomCsrfTokenRepository implements CsrfTokenRepository {
     @Override
     public CsrfToken loadToken(HttpServletRequest request) {
         String identifier = request.getHeader("X-IDENTIFIER");
-        Optional<Token> existingToken = jpaTokenRepository.findTokenByIdentifier(identifier);
-        if (existingToken.isPresent()) {
-            Token token = existingToken.get();
-            return  new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", token.getToken());
+
+        if (identifier == null || identifier.isBlank()) {
+            return null;
         }
-        return null;
+
+        Optional<Token> existingToken = jpaTokenRepository.findTokenByIdentifier(identifier);
+
+        if (existingToken.isEmpty()) {
+            return null;
+        }
+
+        Token token = existingToken.get();
+
+        if (token.getExpiresAt() == null || token.getExpiresAt().isBefore(Instant.now())) {
+            jpaTokenRepository.delete(token);
+            return null;
+        }
+
+        return new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", token.getToken());
     }
 }

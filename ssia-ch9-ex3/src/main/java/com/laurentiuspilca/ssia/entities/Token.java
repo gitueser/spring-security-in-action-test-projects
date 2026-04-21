@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.Instant;
+
 @Entity
 public class Token {
 
@@ -14,6 +16,7 @@ public class Token {
 
     private String identifier;
     private String token;
+    private Instant expiresAt;
 
     public int getId() {
         return id;
@@ -37,5 +40,13 @@ public class Token {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public Instant getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(Instant expiresAt) {
+        this.expiresAt = expiresAt;
     }
 }
