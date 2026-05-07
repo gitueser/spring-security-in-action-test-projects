@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.laurentiuspilca</groupId>
-    <artifactId>ssia-ch11-ex2</artifactId>
+    <artifactId>ssia-ch12-ex1</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ssia-ch11-ex2</name>
+    <name>ssia-ch12-ex1</name>
     <description>Demo project for Spring Security in Action</description>
 
     <properties>
