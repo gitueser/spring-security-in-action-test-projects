@@ -656,3 +656,180 @@ Authorization Server всё равно хранит metadata токена у с�
 - client_id;
 - active status;
 - и другие metadata.
+
+
+---
+
+# Token Revocation (Отзыв токенов)
+
+OAuth2 Authorization Server позволяет отзывать ранее выданные токены.
+
+Это называется:
+
+```text
+token revocation
+```
+
+---
+
+# Зачем нужен отзыв токенов
+
+Представим ситуацию:
+
+- access token был украден;
+- token случайно попал в logs;
+- token был скомпрометирован;
+- доступ нужно немедленно отключить.
+
+В таких случаях можно отозвать токен раньше,
+чем истечет его `exp`.
+
+---
+
+# Endpoint для отзыва токенов
+
+Spring Authorization Server предоставляет endpoint:
+
+```text
+http://localhost:8080/oauth2/revoke
+```
+
+Поддержка token revocation включена по умолчанию.
+
+---
+
+# Как работает отзыв токена
+
+После revoke:
+
+- token становится неактивным;
+- token больше нельзя использовать;
+- introspection endpoint будет возвращать:
+
+```json
+{
+  "active": false
+}
+```
+
+даже если срок жизни токена (`exp`) еще не истек.
+
+---
+
+# Правильный cURL request для revoke
+
+Нужно отправить:
+
+- token;
+- HTTP Basic Authentication.
+
+Важно:
+параметр `token` должен отправляться в POST body как:
+
+```text
+application/x-www-form-urlencoded
+```
+
+---
+
+# Пример revoke request
+
+```bash
+curl -i -X POST "http://localhost:8080/oauth2/revoke" \
+-H "Authorization: Basic Y2xpZW50OnNlY3JldA==" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "token=ACCESS_TOKEN"
+```
+
+Пример:
+
+```bash
+curl -i -X POST "http://localhost:8080/oauth2/revoke" \
+-H "Authorization: Basic Y2xpZW50OnNlY3JldA==" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "token=iED8-aUd5QLTfihDOTGUhKgKwzhJFzYWnGdpNT2UZWO3VVDqtMONNdozq1"
+```
+
+---
+
+# Проверка revoke через introspection
+
+После revoke можно проверить token через:
+
+```text
+/oauth2/introspect
+```
+
+---
+
+# Пример introspection после revoke
+
+```bash
+curl -i -X POST "http://localhost:8080/oauth2/introspect" \
+-H "Authorization: Basic Y2xpZW50OnNlY3JldA==" \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "token=ACCESS_TOKEN"
+```
+
+Ответ:
+
+```json
+{
+  "active": false
+}
+```
+
+---
+
+# Важное замечание про revoke и performance
+
+Чтобы revoke действительно работал,
+resource server должен регулярно проверять token через introspection endpoint.
+
+Даже если token является JWT.
+
+Это означает:
+
+- дополнительные network calls;
+- дополнительную нагрузку;
+- увеличение latency;
+- зависимость resource server от authorization server.
+
+---
+
+# Когда revoke имеет смысл
+
+Revocation особенно полезен, если:
+
+- система высокочувствительная;
+- токены дают доступ к критичным данным;
+- есть риск компрометации токенов;
+- нужен немедленный отзыв доступа.
+
+---
+
+# Когда revoke может быть избыточным
+
+Если access token живет очень недолго:
+
+```text
+5-10 minutes
+```
+
+иногда revoke не нужен.
+
+Во многих системах проще:
+
+- использовать короткоживущие access tokens;
+- быстро выдавать новые tokens;
+- не делать introspection на каждый request.
+
+---
+
+# Что важно запомнить
+
+- revoke делает token неактивным до истечения срока жизни;
+- revoke особенно полезен для opaque tokens;
+- revoke обычно используется вместе с introspection;
+- introspection увеличивает нагрузку на систему;
+- revoke — это компромисс между security и performance.
