@@ -11,18 +11,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 public class ProjectConfig {
 
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        var uds = new InMemoryUserDetailsManager();
-//        uds.createUser(
-//                User.withUsername("bill")
-//                        .password("password")
-//                        .roles("USER")
-//                        .build()
-//        );
-//        return uds;
-//    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
