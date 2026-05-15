@@ -59,9 +59,8 @@ public class SecurityConfig {
                 .clientId("client")
                 .clientSecret("secret")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .redirectUri("https://www.manning.com/authorized")
-                .scope(OidcScopes.OPENID)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .scope("CUSTOM")
                 .build();
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
