@@ -18,12 +18,6 @@ public class ProjectConfig {
     @Value("${resourceserver.secret}")
     private String resourceServerSecret;
 
-    private final CustomJwtAuthenticationConverter converter;
-
-    public ProjectConfig(CustomJwtAuthenticationConverter converter) {
-        this.converter = converter;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.oauth2ResourceServer(c -> c
