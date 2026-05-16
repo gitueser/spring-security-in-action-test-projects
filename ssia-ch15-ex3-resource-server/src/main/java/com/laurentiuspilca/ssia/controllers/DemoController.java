@@ -10,18 +10,8 @@ import java.util.Map;
 @RestController
 public class DemoController {
 
-//    @GetMapping("/demo")
-//    public Authentication demo(Authentication authentication) {
-//        return authentication;
-//    }
-
-
-//    To return only the required fields, rather than the entire Authentication object
     @GetMapping("/demo")
-    public Map<String, String> demo(CustomAuthentication authentication) {
-        return Map.of(
-                "name", authentication.getName(),
-                "priority", authentication.getPriority()
-        );
+    public String demo() {
+        return "Demo";
     }
 }
