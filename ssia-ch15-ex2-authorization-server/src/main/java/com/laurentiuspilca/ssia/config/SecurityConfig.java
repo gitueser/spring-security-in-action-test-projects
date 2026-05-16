@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -93,8 +94,10 @@ public class SecurityConfig {
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer() {
         return context -> {
-            JwtClaimsSet.Builder claims = context.getClaims();
-            claims.claim("priority", "HIGH");
+            if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+                JwtClaimsSet.Builder claims = context.getClaims();
+                claims.claim("priority", "HIGH");
+            }
         };
     }
 }
