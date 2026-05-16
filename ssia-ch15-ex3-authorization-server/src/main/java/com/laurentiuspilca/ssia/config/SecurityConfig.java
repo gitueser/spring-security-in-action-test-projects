@@ -66,7 +66,16 @@ public class SecurityConfig {
                         .build())
                 .scope("CUSTOM")
                 .build();
-        return new InMemoryRegisteredClientRepository(registeredClient);
+
+        RegisteredClient resourceServer = RegisteredClient
+                .withId(UUID.randomUUID().toString())
+                .clientId("resource_server")
+                .clientSecret("resource_server_secret")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .build();
+
+        return new InMemoryRegisteredClientRepository(registeredClient, resourceServer);
     }
 
     @Bean
