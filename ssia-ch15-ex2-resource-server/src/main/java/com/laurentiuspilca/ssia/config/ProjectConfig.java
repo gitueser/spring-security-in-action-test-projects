@@ -12,9 +12,9 @@ public class ProjectConfig {
     @Value("${keySetURI}")
     private String keySetURI;
 
-    private final JwtAuthenticationConverter converter;
+    private final CustomJwtAuthenticationConverter converter;
 
-    public ProjectConfig(JwtAuthenticationConverter converter) {
+    public ProjectConfig(CustomJwtAuthenticationConverter converter) {
         this.converter = converter;
     }
 

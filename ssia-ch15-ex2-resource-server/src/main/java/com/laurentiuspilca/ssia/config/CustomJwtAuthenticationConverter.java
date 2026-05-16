@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class JwtAuthenticationConverter implements Converter<Jwt, CustomAuthentication> {
+public class CustomJwtAuthenticationConverter implements Converter<Jwt, CustomAuthentication> {
 
     @Override
     public CustomAuthentication convert(Jwt source) {
