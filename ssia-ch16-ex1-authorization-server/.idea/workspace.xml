@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2cd140b4-2271-401d-9521-46c36af1f0c2" name="Changes" comment="Added custom OAuth2 Authorization Server login example&#10;&#10;- added ssia-ch16-ex1-authorization-server project&#10;- configured Spring Authorization Server with authorization_code grant&#10;- configured custom OAuth2 client registration&#10;- added OpenID Connect support&#10;- configured redirect URI for OAuth2 login&#10;- added in-memory test user (bill/password)&#10;- added ssia-ch16-ex1-client project&#10;- configured oauth2Login() authentication&#10;- configured custom provider via issuer-uri&#10;- added static index.html page&#10;- documented static vs templates behavior in Spring Boot&#10;- added README with full OAuth2 login flow explanation&#10;- documented localhost vs 127.0.0.1 cookie/session issue">
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_custom_authorization_server_oauth2_login.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/laurentiuspilca/ssia/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/laurentiuspilca/ssia/config/ProjectConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/laurentiuspilca/ssia/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/laurentiuspilca/ssia/MainTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/laurentiuspilca/ssia/PkceGeneratorTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/README_custom_authorization_server_oauth2_login.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/src/main/java/com/laurentiuspilca/ssia/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/src/main/java/com/laurentiuspilca/ssia/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/src/main/java/com/laurentiuspilca/ssia/controllers/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1-client/src/test/java/com/laurentiuspilca/ssia/MainTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/README_oauth2_login_google_github.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/src/main/java/com/laurentiuspilca/ssia/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/src/main/java/com/laurentiuspilca/ssia/config/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/src/main/java/com/laurentiuspilca/ssia/controllers/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/src/main/resources/templates/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ssia-ch16-ex1/src/test/java/com/laurentiuspilca/ssia/MainTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;gitueser&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/gitueser/spring-security-in-action-test-projects.git&quot;,
+    &quot;accountId&quot;: &quot;c439bb9a-d71c-40f7-8120-9f86dfd7c08a&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="3DUY1ng9JQVr9adIvisyrIx1PHp" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.PkceGeneratorTest.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.Main.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.repository.indices&quot;
+  }
+}</component>
+  <component name="RunManager" selected="Spring Boot.Main">
+    <configuration name="PkceGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ssia-ch14-ex1" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.laurentiuspilca.ssia.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.laurentiuspilca.ssia" />
+      <option name="MAIN_CLASS_NAME" value="com.laurentiuspilca.ssia.PkceGeneratorTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <module name="ssia-ch14-ex1" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.laurentiuspilca.ssia.Main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.laurentiuspilca.ssia.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.Main" />
+        <item itemvalue="JUnit.PkceGeneratorTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2cd140b4-2271-401d-9521-46c36af1f0c2" name="Changes" comment="" />
+      <created>1778337903008</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1778337903008</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Added Spring Authorization Server OAuth2 PKCE example&#10;&#10;Added a minimal Spring Authorization Server example based on Spring Boot 3 and Spring Security 6&#10;Configured OAuth2 Authorization Code flow with PKCE support&#10;Added OpenID Connect (OIDC) support&#10;Configured in-memory OAuth2 client and in-memory user authentication&#10;Added JWK/JWT configuration for token signing&#10;Added PKCE generator test utility for generating:&#10;code_verifier&#10;code_challenge&#10;authorization URL&#10;Verified full OAuth2 flow manually:&#10;authorization request&#10;login&#10;authorization code retrieval&#10;token exchange&#10;access token and id_token generation&#10;Added detailed README.md documentation with:&#10;project overview&#10;OAuth2 flow explanation&#10;PKCE explanation&#10;curl examples&#10;troubleshooting notes&#10;step-by-step instructions for obtaining access tokens">
+      <option name="closed" value="true" />
+      <created>1778848691683</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778848691683</updated>
+    </task>
+    <task id="LOCAL-00002" summary="hot fix">
+      <option name="closed" value="true" />
+      <created>1778875948113</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1778875948113</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added custom OAuth2 Authorization Server login example&#10;&#10;- added ssia-ch16-ex1-authorization-server project&#10;- configured Spring Authorization Server with authorization_code grant&#10;- configured custom OAuth2 client registration&#10;- added OpenID Connect support&#10;- configured redirect URI for OAuth2 login&#10;- added in-memory test user (bill/password)&#10;- added ssia-ch16-ex1-client project&#10;- configured oauth2Login() authentication&#10;- configured custom provider via issuer-uri&#10;- added static index.html page&#10;- documented static vs templates behavior in Spring Boot&#10;- added README with full OAuth2 login flow explanation&#10;- documented localhost vs 127.0.0.1 cookie/session issue">
+      <option name="closed" value="true" />
+      <created>1779623830680</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1779623830680</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added Spring Authorization Server OAuth2 PKCE example&#10;&#10;Added a minimal Spring Authorization Server example based on Spring Boot 3 and Spring Security 6&#10;Configured OAuth2 Authorization Code flow with PKCE support&#10;Added OpenID Connect (OIDC) support&#10;Configured in-memory OAuth2 client and in-memory user authentication&#10;Added JWK/JWT configuration for token signing&#10;Added PKCE generator test utility for generating:&#10;code_verifier&#10;code_challenge&#10;authorization URL&#10;Verified full OAuth2 flow manually:&#10;authorization request&#10;login&#10;authorization code retrieval&#10;token exchange&#10;access token and id_token generation&#10;Added detailed README.md documentation with:&#10;project overview&#10;OAuth2 flow explanation&#10;PKCE explanation&#10;curl examples&#10;troubleshooting notes&#10;step-by-step instructions for obtaining access tokens" />
+    <MESSAGE value="hot fix" />
+    <MESSAGE value="Added custom OAuth2 Authorization Server login example&#10;&#10;- added ssia-ch16-ex1-authorization-server project&#10;- configured Spring Authorization Server with authorization_code grant&#10;- configured custom OAuth2 client registration&#10;- added OpenID Connect support&#10;- configured redirect URI for OAuth2 login&#10;- added in-memory test user (bill/password)&#10;- added ssia-ch16-ex1-client project&#10;- configured oauth2Login() authentication&#10;- configured custom provider via issuer-uri&#10;- added static index.html page&#10;- documented static vs templates behavior in Spring Boot&#10;- added README with full OAuth2 login flow explanation&#10;- documented localhost vs 127.0.0.1 cookie/session issue" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added custom OAuth2 Authorization Server login example&#10;&#10;- added ssia-ch16-ex1-authorization-server project&#10;- configured Spring Authorization Server with authorization_code grant&#10;- configured custom OAuth2 client registration&#10;- added OpenID Connect support&#10;- configured redirect URI for OAuth2 login&#10;- added in-memory test user (bill/password)&#10;- added ssia-ch16-ex1-client project&#10;- configured oauth2Login() authentication&#10;- configured custom provider via issuer-uri&#10;- added static index.html page&#10;- documented static vs templates behavior in Spring Boot&#10;- added README with full OAuth2 login flow explanation&#10;- documented localhost vs 127.0.0.1 cookie/session issue" />
+  </component>
+</project>
