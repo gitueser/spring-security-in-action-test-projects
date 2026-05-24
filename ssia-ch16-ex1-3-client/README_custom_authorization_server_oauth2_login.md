@@ -5,8 +5,8 @@
 В примере используются два приложения:
 
 ```text
-ssia-ch16-ex1-authorization-server
-ssia-ch16-ex1-client
+ssia-ch16-ex1-3-authorization-server
+ssia-ch16-ex1-3-client
 ```
 
 ---
@@ -55,7 +55,7 @@ client-secret
 Проект:
 
 ```text
-ssia-ch16-ex1-authorization-server
+ssia-ch16-ex1-3-authorization-server
 ```
 
 Основан на проекте:
@@ -79,7 +79,7 @@ ssia-ch14-ex1
 Проект:
 
 ```text
-ssia-ch16-ex1-client
+ssia-ch16-ex1-3-client
 ```
 
 Это Spring MVC web-приложение.
@@ -206,7 +206,7 @@ localhost
 Проект:
 
 ```text
-ssia-ch16-ex1-authorization-server
+ssia-ch16-ex1-3-authorization-server
 ```
 
 ---
@@ -320,7 +320,7 @@ openid
 Проект:
 
 ```text
-ssia-ch16-ex1-client
+ssia-ch16-ex1-3-client
 ```
 
 ---
@@ -550,7 +550,7 @@ Spring Security автоматически ожидает callback на:
 В папке:
 
 ```text
-ssia-ch16-ex1-authorization-server
+ssia-ch16-ex1-3-authorization-server
 ```
 
 Команда:
@@ -572,7 +572,7 @@ http://127.0.0.1:7070
 В папке:
 
 ```text
-ssia-ch16-ex1-client
+ssia-ch16-ex1-3-client
 ```
 
 Команда:
