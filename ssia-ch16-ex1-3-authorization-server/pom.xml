@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.laurentiuspilca</groupId>
-    <artifactId>ssia-ch16-ex1-authorization-server</artifactId>
+    <artifactId>ssia-ch16-ex1-3-authorization-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ssia-ch16-ex1-authorization-server</name>
+    <name>ssia-ch16-ex1-3-authorization-server</name>
     <description>Demo project for Spring Security in Action</description>
 
     <properties>
